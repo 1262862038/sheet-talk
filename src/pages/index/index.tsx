@@ -43,7 +43,7 @@ type BubbleDataType = {
 };
 console.log('env---', process.env.NODE_ENV)
 
-const requestUrl = process.env.NODE_ENV === 'development' ? 'http://10.5.222.0:8080' : 'http://ai-product-j-1.zeabur.internal:8080'
+const requestUrl = process.env.NODE_ENV === 'development' ? 'http://10.5.222.0:8080' : 'https://ai-product-j-1.zeabur.internal:8080'
 const DEFAULT_CONVERSATIONS_ITEMS = [
   {
     key: 'default-0',
@@ -287,11 +287,36 @@ const generateRandom6DigitString = () => {
         }
     };
 const pollForUrl = async () => {
+  let maxRetries = 10;
+  let retries = 0;
   if (isPolling) return;
   console.log('pollForUrl',isPolling);
 
   setIsPolling(true);
   timerRef.current = setTimeout(async() => {
+    if(retries > maxRetries) {
+       // 处理失败情况
+            setMessages(prev => [
+              ...prev.slice(0,prev.length-1),
+               {
+                key: generateRandom6DigitString(),
+                message: {
+                  role: 'thinking',
+                  content: '文件生成失败，请重试！'
+                },
+              },
+              {
+                key: (+new Date()).toString(),
+                message: {
+                  role: 'file',
+                  content: '文件生成失败，请重试'
+                },
+              }
+            ]);
+            clearTimeout(timerRef.current);
+            return
+    }
+    retries += 1;
  try {
         // 替换为你的实际API端点
         const response = await fetch(`${requestUrl}/api/chat/read-file?sessionId=${sessionIdRef.current}`, {
