@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/Header';
+import Header from '../../components/header';
 const Index = () => {
   const [inputText, setInputText] = useState('');
  const navigate = useNavigate();
