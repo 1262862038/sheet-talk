@@ -380,8 +380,8 @@ const pollForUrl = async () => {
     ])
   }
     const downloadExcelByUrl = async (url: string, fileName = '文件下载.xlsx') => {
-      window.open(url, '_blank');
-      return
+      // window.open(url, '_blank');
+      // return
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('文件下载失败');
