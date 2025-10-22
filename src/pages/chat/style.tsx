@@ -165,6 +165,21 @@ const useStyle = createStyles(({ token, css }: any) => {
       color: #9aa7b7;
       font-size: 14px;
     `,
+    sendButton: css`
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      width: 36px;
+      border-radius: 12px;
+      background: #172d4d;
+      cursor: pointer;
+      /* border-color: ${token.sendBorderColor}; */
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    `,
   };
 
 });

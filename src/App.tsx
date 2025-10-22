@@ -1,12 +1,34 @@
+import { XProvider } from '@ant-design/x';
 import '@douyinfe/semi-ui/dist/css/semi.css';
 import './App.css';
-import Index from './pages/index/index';
+import { createBrowserRouter, Outlet, Router, RouterProvider } from 'react-router-dom';
+import Index from './pages/index';
+import Chat from './pages/chat';
+import Layout from './layout';
 
 
   const App = () => {
 
+
+
+    const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />, // 父路由使用布局组件
+    children: [
+      { path: '', element: <Index /> }, // 根路径的子路由（默认显示首页）
+      { path: '/chat', element: <Chat /> }, // 根路径的子路由（默认显示首页）
+
+    ],
+  },
+  { path: '*', element: <div>notFound</div> },
+]);
+
   return (
-     <Index />
+    <RouterProvider router={router}>
+
+      </RouterProvider>
+
   );
 };
 
