@@ -159,11 +159,21 @@ const useStyle = createStyles(({ token, css }: any) => {
     `,
     thinkingBox: css`
       padding: 10px 0;
-
+    `,
+    thinkWrap: css`
+      display: flex;
+      align-items: flex-start;
     `,
     thinking: css`
       color: #9aa7b7;
       font-size: 14px;
+      margin-right: 30px;
+      width: 320px;
+      height: 380px;
+      overflow-y: auto;
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 1.5rem;
     `,
     sendButton: css`
       display: flex;

@@ -84,8 +84,8 @@ const handlePromptChange = (e) => {
                         <div className="bg-green-900 text-green-600 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
                             <i className="fa fa-rocket text-3xl"></i>
                         </div>
-                        <h3 className="text-xl font-bold mb-4 text-center">即开即用</h3>
-                        <p className="text-gray-300 text-center">生成的Excel文件无需二次修改，直接满足您的业务需求，节省宝贵时间</p>
+                        <h3 className="text-xl font-bold mb-4 text-center">数据安全</h3>
+                        <p className="text-gray-300 text-center">在Excel生 成阶段，没有借助任何第三方 API(或工具)，完全本地自主生成</p>
                     </div>
                 </div>
             </div>
@@ -224,8 +224,8 @@ const handlePromptChange = (e) => {
                     <div className="bg-gray-900 rounded-xl overflow-hidden shadow-gray-700 hover:shadow-gray-700 transition-shadow">
                         <img src="https://p3-doubao-search-sign.byteimg.com/labis/101ff89dcb95e3f52af4e97da3c2991d~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&x-expires=1766198291&x-signature=ATZ9g1DgWH77SDrY0nfHVvh5tk0%3D" alt="销售分析仪表盘" className="w-full h-48 object-cover" />
                         <div className="p-6">
-                            <h3 className="text-xl font-bold mb-2">销售分析仪表盘</h3>
-                            <p className="text-gray-300 mb-4">包含多维度销售数据可视化、同比增长率分析和预测趋势图表</p>
+                            <h3 className="text-xl font-bold mb-2">生成个人所得税 Excel模版</h3>
+                            <p className="text-gray-300 mb-4">包含数据图表，多Sheet页，说明等信息</p>
 
                              <button onClick={() => handleGenerateClick('我们公司企业在过去一年中推出了三款产品，并对部分原有产品进行了价格调整。现在他们想通过PVM分析了解今年总收入增长的主要驱动力是什么。 以下是一些关键数据:价格因素:去年A的平均售价为1.5元/瓶，今年调整为1.6元/瓶，去年销量为1200万瓶。B的价格保持不变，仍为2元/瓶。 销量因素:A今年销量减少至1000万瓶。B今年销量稳定在800万瓶。新推出的三款C、D、E，分别售出2000万瓶、1500万瓶和1000万瓶，定价分别为2.5元/瓶、2元瓶和1.8元/瓶。产品组合因素:新品C、D、E带来的收入增量，请帮忙生成PVM模型表格模板，Excel模版需要带公式。')} className="example-btn bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm" data-example="财务数据">
                                 查看示例
@@ -235,8 +235,8 @@ const handlePromptChange = (e) => {
                     <div className="bg-gray-900 rounded-xl overflow-hidden shadow-gray-700 hover:shadow-gray-700 transition-shadow">
                         <img src="https://p11-doubao-search-sign.byteimg.com/labis/f4f14e856aade2775058623b6ef59943~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&x-expires=1766198291&x-signature=ZKhQPy1%2FFuz%2FsVHWlkX0p36QzLY%3D" alt="财务数据看板" className="w-full h-48 object-cover" />
                         <div className="p-6">
-                            <h3 className="text-xl font-bold mb-2">财务数据看板</h3>
-                            <p className="text-gray-300 mb-4">集成收入支出分析、利润计算、财务比率和预算执行情况</p>
+                            <h3 className="text-xl font-bold mb-2">生成一个PVM分析表格模版</h3>
+                            <p className="text-gray-300 mb-4">集成PVM基础数据、报表分析、图表说明等</p>
                              <button onClick={() => handleGenerateClick('我要生成一个[个人所得税的Excel模板]，用于[计算每月个人所得税]，数据如下：[1月收入20000，2月收入30000，3月收入30000，4月收入40000，5月收入50000，6月收入60000，7月收入70000，8月收入80000，9月收入90000，10月收入100000，11月收入110000，12月收入120000]')} className="example-btn bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm" data-example="销售分析">
                                 查看示例
                             </button>
@@ -245,8 +245,8 @@ const handlePromptChange = (e) => {
                     <div className="bg-gray-900 rounded-xl overflow-hidden shadow-gray-700 hover:shadow-gray-700 transition-shadow">
                         <img src="https://p3-doubao-search-sign.byteimg.com/labis/b21b296a53de6deb3b666ba7d4911e05~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&x-expires=1766198291&x-signature=bJu5J8%2BDT4BFl%2BCFfv4TmU67Two%3D" alt="市场调研分析" className="w-full h-48 object-cover" />
                         <div className="p-6">
-                            <h3 className="text-xl font-bold mb-2">市场调研分析</h3>
-                            <p className="text-gray-300 mb-4">包含问卷数据统计、交叉分析、趋势预测和市场份额计算</p>
+                            <h3 className="text-xl font-bold mb-2">随机生成一个Excel模版</h3>
+                            <p className="text-gray-300 mb-4">内容随机填充，仅供下载参考</p>
                             <button onClick={() => handleGenerateClick('随机生成excel')} className="example-btn bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm" data-example="市场调研">
                                 查看示例
                             </button>

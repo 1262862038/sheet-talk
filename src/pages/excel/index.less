@@ -1,0 +1,306 @@
+// 颜色变量定义
+@primary: #3b82f6;
+@primary-dark: #2563eb;
+@success: #10b981;
+@warning: #f59e0b;
+@danger: #ef4444;
+@text: #ffffff;
+@text-secondary: #aaaaaa;
+@text-tertiary: #dddddd;
+@bg: #121212;        // 暗黑色背景
+@bg-light: #1e1e1e;   // 稍亮的暗色
+@bg-lighter: #2d2d2d; // 更亮一点的暗色
+@border: #3d3d3d;     // 边框颜色
+
+// 主卡片样式
+.main-card {
+  width: 100%;
+  width: 350px;
+  height: 380px;
+  flex-shrink: 0;
+  background-color: @bg-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: none;
+  .ant-card-body {
+    padding: 0;
+  }
+}
+
+// 标题区域
+.title-area {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid @border;
+
+  .excel-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    filter: invert(1);
+  }
+
+  .title-text {
+    color: @text;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+// 内容区域
+.content-area {
+  padding: 1.5rem;
+}
+
+// 进度条样式
+.progress-section {
+  margin-bottom: 1.5rem;
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+
+    .percentage {
+      color: @primary;
+      font-size: 16px;
+    }
+
+    .time-estimate {
+      color: @text-secondary;
+      font-size: 12px;
+    }
+  }
+
+  .ant-progress {
+    .ant-progress-outer {
+      background-color: @bg-lighter;
+      border-radius: 4px;
+    }
+
+    .ant-progress-bg {
+      border-radius: 4px;
+    }
+  }
+}
+
+// 状态信息样式
+.status-section {
+  margin-bottom: 1.5rem;
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    .status-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: @bg-lighter;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .status-texts {
+      flex: 1;
+      .main-status {
+        color: @text;
+        margin-bottom: 4px;
+        font-size: 14px;
+
+        .typing-cursor {
+          border-right: 2px solid @primary;
+          animation: blink 1s infinite;
+        }
+      }
+
+      .sub-status {
+        color: @text-secondary;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// 数据可视化样式
+.data-visualization {
+  background-color: @bg-lighter;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 1.5rem;
+
+  .visualization-title {
+    color: @text-secondary;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .data-cells {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+
+    .data-cell {
+      height: 6px;
+      background-color: @bg-light;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: @primary;
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+// Excel表格预览样式
+.excel-preview {
+  border: 1px solid @border;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+
+  .table-header {
+    background-color: @bg-lighter;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid @border;
+
+    .sheet-name {
+      color: @text-secondary;
+      font-size: 12px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 6px;
+
+      .control-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .table-content {
+    padding: 8px;
+  }
+
+  .ant-table {
+    background-color: transparent;
+    border: none;
+
+    &-thead {
+      .ant-table-cell {
+        background-color: @bg-lighter;
+        color: @text-secondary;
+        border-color: @border;
+        font-weight: normal;
+        font-size: 12px;
+      }
+    }
+
+    &-tbody {
+      .ant-table-cell {
+        color: @text;
+        border-color: @border;
+        font-size: 12px;
+
+        &.filled {
+          background-color: rgba(59, 130, 246, 0.1);
+          color: @primary;
+        }
+      }
+    }
+  }
+}
+
+// 按钮区域样式
+.button-area {
+  display: flex;
+  justify-content: flex-end;
+
+  .cancel-btn {
+    background-color: @bg-lighter;
+    color: @text-secondary;
+    border: none;
+
+    &:hover {
+      background-color: darken(@bg-lighter, 10%);
+      color: @text;
+    }
+
+    &:disabled {
+      background-color: darken(@bg, 10%);
+      color: @text-secondary;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 完成卡片样式
+.complete-card {
+  width: 100%;
+  max-width: 350px;
+  background-color: @bg-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+
+  .complete-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    .complete-icon {
+      color: @success;
+      font-size: 24px;
+      margin-right: 12px;
+    }
+
+    .title-text {
+      color: @text;
+      margin: 0;
+      font-weight: 400;
+    }
+  }
+
+  .complete-message {
+    color: @text-secondary;
+    margin-bottom: 1.5rem;
+  }
+
+  .download-btn {
+    background-color: @success;
+    border-color: @success;
+
+    &:hover {
+      background-color: darken(@success, 10%);
+      border-color: darken(@success, 10%);
+    }
+  }
+}
+
+// 动画
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+// 鼠标跟随效果
+.mouse-follow-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}

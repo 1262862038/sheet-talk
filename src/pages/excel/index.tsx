@@ -1,233 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Progress, Card, Button, Typography, Space, Table, Tag, Spin, Alert } from 'antd';
+import { Card, Progress, Typography, Table, Button, Spin } from 'antd';
 import {
-  ExcelOutlined,
-  LoadingOutlined,
   CheckOutlined,
   CloseOutlined,
   DownloadOutlined,
+  LoadingOutlined,
   DatabaseOutlined,
   FileExcelOutlined,
   LineChartOutlined,
   BorderOutlined
 } from '@ant-design/icons';
-import 'antd/dist/reset.css';
-import { css } from 'antd-style';
-
-// 自定义样式
-const styles = {
-  container: css`
-    min-height: 100vh;
-    background-color: #121212;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  `,
-  card: css`
-    background-color: #121212;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    border: none;
-    width: 100%;
-    max-width: 500px;
-  `,
-  title: css`
-    color: #fff;
-    font-weight: 300;
-    text-align: center;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `,
-  excelIcon: css`
-    margin-right: 10px;
-    filter: invert(1);
-  `,
-  progressContainer: css`
-    margin-bottom: 20px;
-  `,
-  progressText: css`
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-  `,
-  statusContainer: css`
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-  `,
-  statusIcon: css`
-    margin-right: 10px;
-  `,
-  statusText: css`
-    color: #fff;
-    font-weight: 300;
-  `,
-  subStatusText: css`
-    color: #aaa;
-    font-size: 12px;
-  `,
-  visualizationContainer: css`
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-  `,
-  visualizationTitle: css`
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 10px;
-    font-weight: 300;
-  `,
-  dataCells: css`
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
-  `,
-  dataCell: css`
-    height: 8px;
-    background-color: #2d2d2d;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-  `,
-  dataCellActive: css`
-    background-color: #3b82f6;
-    transform: scale(1.05);
-  `,
-  excelTable: css`
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  `,
-  tableHeader: css`
-    background-color: #2d2d2d;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #3d3d3d;
-  `,
-  sheetName: css`
-    color: #aaa;
-    font-size: 12px;
-    margin-right: 10px;
-  `,
-  windowControls: css`
-    display: flex;
-    gap: 5px;
-  `,
-  controlButton: css`
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  `,
-  tableContainer: css`
-    padding: 10px;
-  `,
-  antTable: css`
-    background-color: transparent;
-    border: none;
-  `,
-  antTableHeader: css`
-    background-color: #2d2d2d;
-    border: none;
-  `,
-  antTableHeaderCell: css`
-    color: #aaa;
-    font-weight: 300;
-    font-size: 12px;
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-  `,
-  antTableCell: css`
-    color: #ddd;
-    font-size: 12px;
-    border: 1px solid #3d3d3d;
-    transition: all 0.3s ease;
-  `,
-  antTableCellFilled: css`
-    background-color: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-  `,
-  buttonContainer: css`
-    display: flex;
-    justify-content: flex-end;
-  `,
-  cancelButton: css`
-    background-color: #2d2d2d;
-    color: #aaa;
-    border: none;
-    &:hover {
-      background-color: #3d3d3d;
-      color: #fff;
-    }
-  `,
-  completeCard: css`
-    background-color: #121212;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    border: none;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 20px;
-  `,
-  completeTitle: css`
-    color: #fff;
-    font-weight: 300;
-    text-align: center;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `,
-  completeIcon: css`
-    margin-right: 10px;
-    color: #10b981;
-  `,
-  completeMessage: css`
-    color: #aaa;
-    text-align: center;
-    margin-bottom: 20px;
-  `,
-  downloadButton: css`
-    background-color: #3b82f6;
-    color: #fff;
-    border: none;
-    &:hover {
-      background-color: #2563eb;
-    }
-  `,
-  typingCursor: css`
-    border-right: 2px solid #3b82f6;
-    animation: blink 1s infinite;
-  `,
-  @keyframes blink: css`
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  `,
-  mouseFollowContainer: css`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1000;
-  `,
-  mouseDot: css`
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background-color: #3b82f6;
-    border-radius: 50%;
-    opacity: 0;
-    transition: all 0.5s ease;
-  `
-};
+import './index.less';
 
 // 生成状态和进度数据
 const generationStates = [
@@ -258,6 +41,7 @@ const initialTableData = [
 ];
 
 const App = () => {
+  // 状态管理
   const [currentStateIndex, setCurrentStateIndex] = useState(0);
   const [currentPercentage, setCurrentPercentage] = useState(0);
   const [tableData, setTableData] = useState(initialTableData);
@@ -266,81 +50,109 @@ const App = () => {
   const [activeCells, setActiveCells] = useState(0);
   const [displayedStatus, setDisplayedStatus] = useState('');
   const [displayedSubStatus, setDisplayedSubStatus] = useState('');
-  const [charIndex, setCharIndex] = useState(0);
-  const [subCharIndex, setSubCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isSubDeleting, setIsSubDeleting] = useState(false);
 
+  // 引用
   const generationInterval = useRef(null);
-  const typingInterval = useRef(null);
-  const subTypingInterval = useRef(null);
+  const typingRef = useRef({});
   const mouseFollowContainer = useRef(null);
-  const lastMousePosition = useRef({ x: 0, y: 0 });
+  const lastMousePos = useRef({ x: 0, y: 0 });
 
-  // 初始化进度
+  // 初始化
   useEffect(() => {
-    startGeneration();
-    initMouseFollowEffect();
+    // 创建鼠标跟随容器
+    const container = document.createElement('div');
+    container.className = 'mouse-follow-container';
+    document.body.appendChild(container);
+    mouseFollowContainer.current = container;
 
+    // 开始生成过程
+    startGeneration();
+    // 初始化第一个状态的打字效果
+    startTyping(generationStates[0].name, setDisplayedStatus, 'main');
+    startTyping(generationStates[0].subname, setDisplayedSubStatus, 'sub');
+
+    // 清理函数
     return () => {
       if (generationInterval.current) clearInterval(generationInterval.current);
-      if (typingInterval.current) clearInterval(typingInterval.current);
-      if (subTypingInterval.current) clearInterval(subTypingInterval.current);
+      Object.values(typingRef.current).forEach(interval => {
+        clearInterval(interval);
+      });
+      if (mouseFollowContainer.current && mouseFollowContainer.current.parentNode) {
+        mouseFollowContainer.current.parentNode.removeChild(mouseFollowContainer.current);
+      }
     };
   }, []);
 
-  // 更新打字效果
+  // 状态变化时更新打字效果
   useEffect(() => {
+    if (currentStateIndex >= generationStates.length) return;
+
     const currentState = generationStates[currentStateIndex];
+    // 清除之前的打字定时器
+    if (typingRef.current.main) clearInterval(typingRef.current.main);
+    if (typingRef.current.sub) clearInterval(typingRef.current.sub);
 
-    // 清除之前的定时器
-    if (typingInterval.current) clearInterval(typingInterval.current);
-    if (subTypingInterval.current) clearInterval(subTypingInterval.current);
-
-    // 重置打字状态
-    setDisplayedStatus('');
-    setDisplayedSubStatus('');
-    setCharIndex(0);
-    setSubCharIndex(0);
-    setIsDeleting(false);
-    setIsSubDeleting(false);
-
-    // 开始打字动画
-    typingInterval.current = setInterval(() => {
-      typeText(currentState.name, setDisplayedStatus, charIndex, setCharIndex, isDeleting, setIsDeleting);
-    }, 50);
-
-    subTypingInterval.current = setInterval(() => {
-      typeText(currentState.subname, setDisplayedSubStatus, subCharIndex, setSubCharIndex, isSubDeleting, setIsSubDeleting);
-    }, 30);
-
-    return () => {
-      if (typingInterval.current) clearInterval(typingInterval.current);
-      if (subTypingInterval.current) clearInterval(subTypingInterval.current);
-    };
+    // 开始新的打字效果
+    startTyping(currentState.name, setDisplayedStatus, 'main');
+    startTyping(currentState.subname, setDisplayedSubStatus, 'sub');
   }, [currentStateIndex]);
 
+  // 鼠标移动效果
+  // useEffect(() => {
+  //   const handleMouseMove = (e) => {
+  //     const currentX = e.clientX;
+  //     const currentY = e.clientY;
+
+  //     // 计算与上次位置的距离
+  //     const distance = Math.sqrt(
+  //       Math.pow(currentX - lastMousePos.current.x, 2) +
+  //       Math.pow(currentY - lastMousePos.current.y, 2)
+  //     );
+
+  //     // 如果移动距离足够大，创建新元素
+  //     if (distance > 50) {
+  //       createMouseTrail(currentX, currentY);
+  //       lastMousePos.current = { x: currentX, y: currentY };
+  //     }
+  //   };
+
+  //   document.addEventListener('mousemove', handleMouseMove);
+  //   return () => document.removeEventListener('mousemove', handleMouseMove);
+  // }, []);
+
   // 打字效果函数
-  const typeText = (text, setDisplayedText, currentIndex, setCurrentIndex, deleting, setDeleting) => {
-    if (deleting) {
-      // 删除字符
-      setDisplayedText(prev => prev.substring(0, currentIndex - 1));
-      setCurrentIndex(prev => prev - 1);
+  const startTyping = (text, setDisplayFunction, type) => {
+    let charIndex = 0;
+    let isDeleting = false;
 
-      // 当删除完成时，停止删除
-      if (currentIndex <= 0) {
-        setDeleting(false);
-      }
-    } else {
-      // 添加字符
-      setDisplayedText(prev => prev + text.charAt(currentIndex));
-      setCurrentIndex(prev => prev + 1);
+    // 清除之前的定时器
+    if (typingRef.current[type]) clearInterval(typingRef.current[type]);
 
-      // 当添加完成时，开始删除
-      if (currentIndex >= text.length - 1) {
-        setDeleting(true);
+    // 设置初始文本为空
+    setDisplayFunction('');
+
+    // 开始打字动画
+    typingRef.current[type] = setInterval(() => {
+      if (isDeleting) {
+        // 删除字符
+        setDisplayFunction(prev => prev.substring(0, charIndex - 1));
+        charIndex--;
+
+        // 当删除完成时，停止删除
+        if (charIndex <= 0) {
+          isDeleting = false;
+        }
+      } else {
+        // 添加字符
+        setDisplayFunction(prev => prev + text.charAt(charIndex));
+        charIndex++;
+
+        // 当添加完成时，开始删除
+        if (charIndex >= text.length) {
+          isDeleting = true;
+        }
       }
-    }
+    }, type === 'main' ? 50 : 30);
   };
 
   // 开始生成过程
@@ -368,13 +180,13 @@ const App = () => {
 
         return newPercentage;
       });
-    }, 100);
+    }, 1000);
   };
 
   // 更新Excel预览
   const updateExcelPreview = (percentage) => {
     const filledCells = Math.floor((percentage / 100) * 25); // 5行5列共25个单元格
-    const newTableData = [...initialTableData];
+    const newTableData = JSON.parse(JSON.stringify(initialTableData));
 
     let cellCount = 0;
 
@@ -417,69 +229,45 @@ const App = () => {
     alert('文件下载已开始，请在下载文件夹中查看。');
   };
 
-  // 初始化鼠标跟随效果
-  const initMouseFollowEffect = () => {
-    if (!mouseFollowContainer.current) return;
-
-    document.addEventListener('mousemove', (e) => {
-      const currentX = e.clientX;
-      const currentY = e.clientY;
-
-      // 计算与上次位置的距离
-      const distance = Math.sqrt(
-        Math.pow(currentX - lastMousePosition.current.x, 2) +
-        Math.pow(currentY - lastMousePosition.current.y, 2)
-      );
-
-      // 如果移动距离足够大，创建新元素
-      if (distance > 50) {
-        createFollowElement(currentX, currentY);
-        lastMousePosition.current = { x: currentX, y: currentY };
-      }
-    });
-  };
-
-  // 创建鼠标跟随元素
-  const createFollowElement = (x, y) => {
+  // 创建鼠标轨迹
+  const createMouseTrail = (x, y) => {
     if (!mouseFollowContainer.current) return;
 
     const dot = document.createElement('div');
     dot.style.cssText = `
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       background-color: #3b82f6;
       border-radius: 50%;
       opacity: 0;
-      transition: all 0.5s ease;
+      transition: all 0.6s ease;
       top: ${y}px;
       left: ${x}px;
+      pointer-events: none;
     `;
 
     mouseFollowContainer.current.appendChild(dot);
 
-    // 强制重排后添加动画类
+    // 触发动画
     setTimeout(() => {
-      dot.style.opacity = '1';
-      dot.style.transform = 'scale(5)';
+      dot.style.opacity = '0.8';
+      dot.style.transform = 'scale(4)';
 
-      // 0.5秒后开始淡出
+      // 淡出并移除
       setTimeout(() => {
         dot.style.opacity = '0';
-        dot.style.transform = 'scale(1)';
-
-        // 动画完成后移除元素
         setTimeout(() => {
-          if (mouseFollowContainer.current && dot.parentNode) {
-            mouseFollowContainer.current.removeChild(dot);
+          if (dot.parentNode) {
+            dot.parentNode.removeChild(dot);
           }
-        }, 500);
-      }, 500);
+        }, 600);
+      }, 400);
     }, 10);
   };
 
   // 获取当前状态
-  const currentState = generationStates[currentStateIndex];
+  const currentState = generationStates[currentStateIndex] || generationStates[0];
 
   // 获取进度条颜色
   const getProgressColor = () => {
@@ -489,164 +277,130 @@ const App = () => {
   };
 
   return (
-    <div css={styles.container}>
-      {/* 鼠标跟随效果容器 */}
-      <div ref={mouseFollowContainer} css={styles.mouseFollowContainer}></div>
-
-      {/* 生成中卡片 */}
-      <Card css={styles.card}>
-        {/* 标题区域 */}
-        <div css={styles.title}>
-          <img
-            src="https://p26-doubao-search-sign.byteimg.com/labis/5e8999acbc4be0ade9b9fb789252edf9~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&x-expires=1776650251&x-signature=zx5I1vqgx40yk6UjtHqAz%2FVvUE8%3D"
-            alt="Excel图标"
-            width="40"
-            height="40"
-            css={styles.excelIcon}
-          />
-          <Typography.Title level={3} css={styles.title}>Excel文件生成中</Typography.Title>
-        </div>
-
-        {/* 进度展示区域 */}
-        <div css={styles.progressContainer}>
-          <div css={styles.progressText}>
-            <Typography.Text>{currentPercentage}%</Typography.Text>
-            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-              {currentPercentage < 100 ?
-                `预计剩余时间: ${Math.round((100 - currentPercentage) * 0.2)}秒` :
-                '已完成'}
-            </Typography.Text>
-          </div>
-          <Progress
-            percent={currentPercentage}
-            strokeColor={getProgressColor()}
-            strokeWidth={4}
-            trailColor="#2d2d2d"
-            status={currentPercentage === 100 ? "success" : "active"}
-          />
-        </div>
-
-        {/* 状态信息区域 */}
-        <div css={styles.statusContainer}>
-          <div css={styles.statusIcon}>
-            {isCancelled ? (
-              <CloseOutlined style={{ color: '#ef4444', fontSize: '20px' }} />
-            ) : currentPercentage === 100 ? (
-              <CheckOutlined style={{ color: '#10b981', fontSize: '20px' }} />
-            ) : (
-              <Spin indicator={<LoadingOutlined style={{ color: '#3b82f6', fontSize: '20px' }} spin />} />
-            )}
-          </div>
-          <div>
-            <Typography.Text css={styles.statusText}>
-              {isCancelled ? '生成已取消' : `${displayedStatus}`}
-              {!isCancelled && currentPercentage < 100 && (
-                <span css={styles.typingCursor} style={{ marginLeft: '2px' }}></span>
-              )}
-            </Typography.Text>
-            <br />
-            <Typography.Text css={styles.subStatusText}>
-              {isCancelled ? '用户已中断文件生成过程' : displayedSubStatus}
-            </Typography.Text>
-          </div>
-        </div>
-
-        {/* 数据处理可视化 */}
-        <div css={styles.visualizationContainer}>
-          <Typography.Text css={styles.visualizationTitle}>数据处理可视化</Typography.Text>
-          <div css={styles.dataCells}>
-            {[...Array(15)].map((_, index) => (
-              <div
-                key={index}
-                css={[
-                  styles.dataCell,
-                  index < activeCells ? styles.dataCellActive : null
-                ]}
-              ></div>
-            ))}
-          </div>
-        </div>
-
-        {/* Excel表格预览 */}
-        <div css={styles.excelTable}>
-          <div css={styles.tableHeader}>
-            <div css={styles.sheetName}>Sheet1</div>
-            <div css={styles.windowControls}>
-              <div css={[styles.controlButton, { backgroundColor: '#ef4444' }]}></div>
-              <div css={[styles.controlButton, { backgroundColor: '#f59e0b' }]}></div>
-              <div css={[styles.controlButton, { backgroundColor: '#10b981' }]}></div>
-            </div>
-          </div>
-          <div css={styles.tableContainer}>
-            <Table
-              dataSource={tableData}
-              columns={columns}
-              pagination={false}
-              size="small"
-              css={styles.antTable}
-              components={{
-                header: {
-                  wrapper: { style: { backgroundColor: '#2d2d2d' } },
-                  cell: { style: { color: '#aaa', fontWeight: '300', fontSize: '12px', backgroundColor: '#2d2d2d', border: '1px solid #3d3d3d' } }
-                },
-                body: {
-                  cell: ({ children, record, index, dataIndex }) => {
-                    const isFilled = children !== '';
-                    return (
-                      <td style={{
-                        color: '#ddd',
-                        fontSize: '12px',
-                        border: '1px solid #3d3d3d',
-                        backgroundColor: isFilled ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                        color: isFilled ? '#3b82f6' : '#ddd'
-                      }}>
-                        {children}
-                      </td>
-                    );
-                  }
-                }
-              }}
+        <Card className="main-card">
+          {/* 标题区域 */}
+          <div className="title-area">
+            <img
+              src="https://p26-doubao-search-sign.byteimg.com/labis/5e8999acbc4be0ade9b9fb789252edf9~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&x-expires=1776650251&x-signature=zx5I1vqgx40yk6UjtHqAz%2FVvUE8%3D"
+              alt="Excel图标"
+              className="excel-icon"
             />
-          </div>
-        </div>
-
-        {/* 操作按钮区域 */}
-        <div css={styles.buttonContainer}>
-          <Button
-            icon={<CloseOutlined />}
-            css={styles.cancelButton}
-            onClick={cancelGeneration}
-            disabled={isCompleted || isCancelled}
-          >
-            取消
-          </Button>
-        </div>
-      </Card>
-
-      {/* 完成状态卡片 (初始隐藏) */}
-      {isCompleted && (
-        <Card css={styles.completeCard}>
-          <div css={styles.completeTitle}>
-            <CheckOutlined css={styles.completeIcon} style={{ fontSize: '24px' }} />
-            <Typography.Title level={3} css={styles.completeTitle}>Excel文件生成完成</Typography.Title>
+            <Typography.Title level={4} className="title-text">Excel文件生成中</Typography.Title>
           </div>
 
-          <Typography.Text css={styles.completeMessage}>
-            您的Excel文件已成功生成，可以点击下方按钮下载。
-          </Typography.Text>
+          <div className="content-area">
+            {/* 进度展示区域 */}
+            <div className="progress-section">
+              <div className="progress-info">
+                <span className="percentage">{currentPercentage}%</span>
+                <span className="time-estimate">
+                  {currentPercentage < 100 && !isCancelled
+                    ? `预计剩余时间: ${Math.round((100 - currentPercentage) * 0.2)}秒`
+                    : currentPercentage === 100
+                      ? '已完成'
+                      : '已取消'}
+                </span>
+              </div>
+              <Progress
+                percent={currentPercentage}
+                strokeColor={getProgressColor()}
+                strokeWidth={10}
+                trailColor="#2d2d2d"
+                status={isCancelled ? "exception" : currentPercentage === 100 ? "success" : "active"}
+              />
+            </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              icon={<DownloadOutlined />}
-              css={styles.downloadButton}
-              onClick={downloadFile}
-            >
-              下载文件
-            </Button>
+
+
+            {/* 数据处理可视化 */}
+            <div className="data-visualization">
+              <div className="visualization-title">数据处理可视化</div>
+              <div className="data-cells">
+                {[...Array(15)].map((_, index) => (
+                  <div
+                    key={index}
+                    className={`data-cell ${index < activeCells ? 'active' : ''}`}
+                  ></div>
+                ))}
+              </div>
+            </div>
+ {/* 状态信息区域 */}
+            {/* <div className="status-section">
+              <div className="status-item">
+                <div className="status-icon">
+                  {isCancelled ? (
+                    <CloseOutlined style={{ color: '#ef4444' }} />
+                  ) : currentPercentage === 100 ? (
+                    <CheckOutlined style={{ color: '#10b981' }} />
+                  ) : (
+                    <Spin indicator={<LoadingOutlined style={{ color: '#3b82f6' }} spin />} />
+                  )}
+                </div>
+                <div className="status-texts">
+
+                  <div className="sub-status">
+                    {currentPercentage === 100  ? '您的Excel文件已成功生成，可以点击按钮下载' : '正在生成中，请稍等！'}
+                  </div>
+                </div>
+                {
+                  currentPercentage === 100 &&  <Button
+                className="cancel-btn"
+                onClick={cancelGeneration}
+              >
+                下载
+              </Button>
+                }
+
+              </div>
+            </div> */}
+            {/* Excel表格预览 */}
+            {/* <div className="excel-preview">
+              <div className="table-header">
+                <div className="sheet-name">Sheet1</div>
+                <div className="window-controls">
+                  <div className="control-btn" style={{ backgroundColor: '#ef4444' }}></div>
+                  <div className="control-btn" style={{ backgroundColor: '#f59e0b' }}></div>
+                  <div className="control-btn" style={{ backgroundColor: '#10b981' }}></div>
+                </div>
+              </div>
+              <div className="table-content">
+                <Table
+                  dataSource={tableData}
+                  columns={columns}
+                  pagination={false}
+                  size="small"
+                  className="ant-table"
+                  components={{
+                    body: {
+                      cell: ({ children, ...restProps }) => (
+                        <td
+                          {...restProps}
+                          className={children ? 'ant-table-cell filled' : 'ant-table-cell'}
+                        >
+                          {children}
+                        </td>
+                      )
+                    }
+                  }}
+                />
+              </div>
+            </div> */}
+
+            {/* 操作按钮区域 */}
+            {/* <div className="button-area">
+              <Button
+                icon={<CloseOutlined />}
+                className="cancel-btn"
+                onClick={cancelGeneration}
+                disabled={isCompleted || isCancelled}
+              >
+                取消
+              </Button>
+            </div> */}
           </div>
         </Card>
-      )}
-    </div>
+
+
   );
 };
 

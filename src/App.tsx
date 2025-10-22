@@ -5,7 +5,7 @@ import { createBrowserRouter, Outlet, Router, RouterProvider } from 'react-route
 import Index from './pages/index';
 import Chat from './pages/chat';
 import Layout from './layout';
-
+import Excel from './pages/excel';
 
   const App = () => {
 
@@ -18,6 +18,7 @@ import Layout from './layout';
     children: [
       { path: '', element: <Index /> }, // 根路径的子路由（默认显示首页）
       { path: '/chat', element: <Chat /> }, // 根路径的子路由（默认显示首页）
+      { path: '/excel', element: <Excel /> }, // 根路径的子路由（默认显示首页）
 
     ],
   },

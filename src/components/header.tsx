@@ -9,10 +9,11 @@ const Header = ({simple}: any) => {
     <nav className={`bg-gray-800 shadow-gray-700 ${simple ? '' : 'fixed'} w-full z-50`}>
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
             <div onClick={() => navigate('/')} className="cursor-pointer flex items-center space-x-2">
+              {simple && <img src="https://simg01.gaodunwangxiao.com/uploadfiles/tmp/upload/202510/22/eb10b_20251022190440.png" alt="" style={{width: '18px', height: '18px'}}/>}
                 <video src={videoStatic} autoPlay loop muted style={{width: '40px', height: '40px'}}></video>
                 <span className="text-xl font-bold text-primary text-white">SheetTalk</span>
             </div>
-           {!simple && <>
+           {!simple ? <>
 
             <div className="hidden md:flex items-center space-x-6">
                 <a href="#features" className="text-gray-300 hover:text-primary transition-colors">功能特点</a>
@@ -24,7 +25,9 @@ const Header = ({simple}: any) => {
                     <i className="fa fa-bars text-xl"></i>
                 </button>
             </div>
-           </>}
+           </>
+          :  <div className="text-gray-300 hover:text-primary transition-colors font-bold">大模型拌饭队</div>
+          }
         </div>
 
     </nav>

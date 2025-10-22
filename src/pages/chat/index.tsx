@@ -40,7 +40,8 @@ import { useTheme } from 'antd-style';
 import './index.less'
 import Header from '../../components/header';
 import { useLocation } from 'react-router-dom';
-
+import Excel from '../excel'
+import Complete from '../excel/complete';
 type BubbleDataType = {
   role: string;
   content: string;
@@ -165,6 +166,7 @@ const timerRef = useRef<any>(null);
 const curContentRef = useRef<string | null>(null);
 
 const theme = useTheme();
+const thinkingRef = useRef<any>(null);
 
   const location = useLocation();
 
@@ -224,6 +226,7 @@ const generateRandom6DigitString = () => {
                   if(curContentRef.current?.includes('EXCEL文件生成，即将返回下载链接，请等待10-20秒')) {
                       pollForUrl()
                     }
+                    scrollToBottomPrecise()
 
                 },
                 onerror(error) {
@@ -238,6 +241,44 @@ const generateRandom6DigitString = () => {
         } catch (error) {
         }
     };
+
+         const downloadExcelByUrl = async (url: string, name?: string) => {
+        let fileName = name || '文件下载.xlsx'
+      // window.open(url, '_blank');
+      // return
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('文件下载失败');
+
+        // 从响应头获取文件名（优先于服务器配置）
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename="?([^";]+)"?/);
+            if (match && match[1]) {
+                fileName = decodeURIComponent(match[1]); // 解码可能的URL编码文件名
+            }
+        }
+
+        // 将响应转为Blob（二进制对象）
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        // 创建a标签下载
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+
+        // 清理资源
+        setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(objectUrl); // 释放内存
+        }, 0);
+    } catch (error) {
+        console.error('下载失败:', error);
+    }
+}
 const pollForUrl = async () => {
   let maxRetries = 10;
   let retries = 0;
@@ -271,7 +312,6 @@ const pollForUrl = async () => {
     }
     retries += 1;
  try {
-        // 替换为你的实际API端点
         const response = await fetch(`${requestUrl}/api/chat/read-file?sessionId=${sessionIdRef.current}`, {
           method: 'GET',
           headers: {
@@ -281,21 +321,11 @@ const pollForUrl = async () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Data:', data);
-
-
           if (data.url) {
           clearTimeout(timerRef.current);
           timerRef.current = null
             setMessages(prev => [
               ...prev.slice(0,prev.length-1),
-              {
-                key: generateRandom6DigitString(),
-                message: {
-                  role: 'assistant',
-                  content: '文件生成成功，请点击下方文件下载。'
-                },
-              },
               {
                 key: generateRandom6DigitString(),
                 message: {
@@ -309,8 +339,6 @@ const pollForUrl = async () => {
               }
             ]);
           setLoading(false);
-
-
           } else if (data.status === 'failed') {
             // 处理失败情况
             setMessages(prev => [
@@ -379,42 +407,15 @@ const pollForUrl = async () => {
       },
     ])
   }
-    const downloadExcelByUrl = async (url: string, fileName = '文件下载.xlsx') => {
-      // window.open(url, '_blank');
-      // return
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('文件下载失败');
+  // 滚动到thinkingBox底部的方法
+const scrollToBottomPrecise = () => {
+  if (thinkingRef.current) {
+    console.log('thinkingRef.current.scrollHeight',thinkingRef.current.scrollHeight)
+    thinkingRef.current.scrollTop = thinkingRef.current.scrollHeight;
+  }
+};
 
-        // 从响应头获取文件名（优先于服务器配置）
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition) {
-            const match = contentDisposition.match(/filename="?([^";]+)"?/);
-            if (match && match[1]) {
-                fileName = decodeURIComponent(match[1]); // 解码可能的URL编码文件名
-            }
-        }
 
-        // 将响应转为Blob（二进制对象）
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-
-        // 创建a标签下载
-        const link = document.createElement('a');
-        link.href = objectUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-
-        // 清理资源
-        setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(objectUrl); // 释放内存
-        }, 0);
-    } catch (error) {
-        console.error('下载失败:', error);
-    }
-}
 //  useEffect(() => {
 //     // 获取从首页传递过来的参数
 //     if (location.state && (location.state as any).prompt) {
@@ -471,13 +472,16 @@ const pollForUrl = async () => {
               variant:'borderless',
               className: 'thinkingBox',
               loadingRender: () => <Spin size="small" />,
-              messageRender: (content) => <div className={styles.thinking} dangerouslySetInnerHTML={{__html: content}}></div>
+              messageRender: (content) => <div className={styles.thinkWrap}>
+
+                <div className={styles.thinking} ref={thinkingRef} dangerouslySetInnerHTML={{__html: content}}></div>
+                <Excel />
+              </div>
             },
             loading: {
               placement: 'start',
               variant:'borderless',
-              className: 'loadingBox',
-              messageRender: (content) => <div >{content}</div>
+              messageRender: (content) => <div></div>
             },
              file: {
                 placement: 'start',
@@ -487,23 +491,24 @@ const pollForUrl = async () => {
                   //     <Attachments.FileCard key={content.uid} item={content} />
                   // </Flex>
                   <div className={"excelSucess"}>
-                <div className={"left"}>
-                    <div className={"iconName"}>
-                        <div className={"icon"}>
-                            <img src="https://simg01.gaodunwangxiao.com/uploadimgs/tmp/upload/202509/10/64059_20250910180216.png" alt="" />
-                        </div>
-                        <div className={"nameSize"}>
-                                <div className={"name"}>{decodeURIComponent(content?.name)}</div>
-                            <div className={"type"}>{""}</div>
-                        </div>
-                    </div>
+                      <div className={"left"}>
+                          <div className={"iconName"}>
+                              <div className={"icon"}>
+                                  <img src="https://simg01.gaodunwangxiao.com/uploadimgs/tmp/upload/202509/10/64059_20250910180216.png" alt="" />
+                              </div>
+                              <div className={"nameSize"}>
+                                      <div className={"name"}>{decodeURIComponent(content?.name)}</div>
+                              </div>
+                          </div>
 
-                </div>
-                <div className={"right"} onClick={() => downloadExcelByUrl(content.url, decodeURIComponent(content.name))}>
-                    <span className={"text"}>下载</span>
-                      <img className='download-img' src="https://simg01.gaodunwangxiao.com/uploadfiles/tmp/upload/202509/15/c61c4_20250915193545.png" alt="" />
-                </div>
-            </div>
+                      </div>
+                      <div className={"right"} onClick={() => downloadExcelByUrl(content.url, decodeURIComponent(content.name))}>
+                          <span className={"text"}>下载</span>
+                            <img className='download-img' src="https://simg01.gaodunwangxiao.com/uploadfiles/tmp/upload/202509/15/c61c4_20250915193545.png" alt="" />
+                      </div>
+                  </div>
+                  // <Complete url={content.url} name={decodeURIComponent(content.name)} />
+                  // <Excel />
                 ),
               },
           }}
@@ -643,7 +648,6 @@ const pollForUrl = async () => {
   );
   return (
     <div className={styles.layout}>
-      {/* <Header styles={styles}/> */}
       <Header simple={true}/>
       {/* {chatSider} */}
       {/* <button onClick={add}>添加</button> */}
