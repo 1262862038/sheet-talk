@@ -81,7 +81,7 @@ const generateRandom6DigitString = () => {
                 },
                 onmessage(event) {
                   console.log('event:', event);
-                  if(!event?.data) return
+                  // if(!event?.data) return
 
 
                    setMessages(prev => {
@@ -97,9 +97,9 @@ const generateRandom6DigitString = () => {
                           sessionId: sessionIdRef.current,
                           message: {
                             // percentage: (((prev[index]?.message?.percentage) || 0) + 5) >=100 ? 99 : (((prev[index].message?.percentage) || 0) + 1),
-                            percentage: conuterRef.current >=100 ? 99 : conuterRef.current,
+                            percentage: conuterRef.current >=100 ? 90 : conuterRef.current,
                             role: 'thinking',
-                            content: prev[index]?.message?.content + event.data,
+                            content: prev[index]?.message?.content + event.data.trim(),
                             status:0
                             // content: loadingIndex > 0 ? prev[index]?.message?.content.slice(0,loadingIndex) + event.data + loadingText : prev[index]?.message?.content + event.data + loadingText,
 
