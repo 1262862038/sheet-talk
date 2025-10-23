@@ -42,7 +42,16 @@ const curContentRef = useRef<string | null>(null);
 
 const theme = useTheme();
 const thinkingRef = useRef<any>(null);
+const conuterRef = useRef<number>(0); // 当前计时
+const conutTimerRef = useRef<any>(0); // 当前计时
 
+const clearCounter = () => {
+  if (conutTimerRef.current) {
+    clearInterval(conutTimerRef.current);
+    conutTimerRef.current = null;
+    conuterRef.current = 0
+  }
+};
 const generateRandom6DigitString = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
@@ -65,11 +74,15 @@ const generateRandom6DigitString = () => {
                 body: JSON.stringify({message,sessionId: sessionIdRef.current}),
 
                 onopen(response) {
+                   conutTimerRef.current = setInterval(() => {
+                     conuterRef.current += 1
+                  }, 1000);
                     return Promise.resolve();
                 },
                 onmessage(event) {
                   console.log('event:', event);
                   if(!event?.data) return
+
 
                    setMessages(prev => {
                     const index = prev.findIndex(v => v.sessionId ===sessionIdRef.current && v?.message?.role === 'thinking');
@@ -83,7 +96,8 @@ const generateRandom6DigitString = () => {
                           key: generateRandom6DigitString(),
                           sessionId: sessionIdRef.current,
                           message: {
-                            percentage: (((prev[index]?.message?.percentage) || 0) + 5) >=100 ? 99 : (((prev[index].message?.percentage) || 0) + 1),
+                            // percentage: (((prev[index]?.message?.percentage) || 0) + 5) >=100 ? 99 : (((prev[index].message?.percentage) || 0) + 1),
+                            percentage: conuterRef.current >=100 ? 99 : conuterRef.current,
                             role: 'thinking',
                             content: prev[index]?.message?.content + event.data,
                             status:0
@@ -117,6 +131,7 @@ const generateRandom6DigitString = () => {
                     throw error; // 直接抛出错误，避免反复调用
                 },
                 onclose() {
+                  clearCounter()
                 },
             });
         } catch (error) {
@@ -470,6 +485,7 @@ const scrollToBottomPrecise = () => {
         onChange={setInputValue}
         onCancel={() => {
           abortController.current?.abort();
+          clearCounter()
           setLoading(false);
           const loadingIndex = messages.findIndex((item) => item.message.role === 'loading');
           const thinkingIndex = messages.findIndex((item) => item.sessionId === sessionIdRef.current);

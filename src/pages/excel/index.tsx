@@ -306,7 +306,7 @@ const App = ({currentPercentage,isCancelled,status}: any) => {
                 <span className="time-estimate">
                   {isCancelled && '已取消'}
                   {!isCancelled && (
-                    status===0 ? `预计剩余时间: ${Math.round((100 - currentPercentage) * 0.2)}秒` : status === 1 ? '已完成' :'生成失败'
+                    status===0 ? `预计剩余时间: ${Math.round((120 - currentPercentage))}秒` : status === 1 ? '已完成' :'生成失败'
                   )
                 }
                 </span>
