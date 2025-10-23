@@ -1,148 +1,22 @@
-import {
-  AppstoreAddOutlined,
-  CloudUploadOutlined,
-  CommentOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DislikeOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-  FileSearchOutlined,
-  HeartOutlined,
-  LikeOutlined,
-  PaperClipOutlined,
-  PlusOutlined,
-  ProductOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  ScheduleOutlined,
-  ShareAltOutlined,
-  SmileOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CloudUploadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
   Attachments,
   Bubble,
-  Conversations,
   Prompts,
   Sender,
   Welcome,
-  useXAgent,
-  useXChat,
 } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { Avatar, Button, Flex, type GetProp, Space, Spin, message } from 'antd';
-import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import useStyle from './style'
 import { useTheme } from 'antd-style';
 
 import './index.less'
 import Header from '../../components/header';
-import { useLocation } from 'react-router-dom';
 import Excel from '../excel'
 import Complete from '../excel/complete';
-type BubbleDataType = {
-  role: string;
-  content: string;
-};
-
-const requestUrl = process.env.NODE_ENV === 'development' ? 'http://10.5.222.0:8080' : 'https://sheet-talk-j.gaodun.com'
-const DEFAULT_CONVERSATIONS_ITEMS = [
-  {
-    key: 'default-0',
-    label: 'What is Ant Design X?',
-    group: 'Today',
-  },
-  {
-    key: 'default-1',
-    label: 'How to quickly install and import components?',
-    group: 'Today',
-  },
-  {
-    key: 'default-2',
-    label: 'New AGI Hybrid Interface',
-    group: 'Yesterday',
-  },
-];
-
-const HOT_TOPICS = {
-  key: '1',
-  label: '快捷提问',
-  children: [
-    {
-      key: '1-1',
-      description: '我要生成一个[个人所得税的Excel模板]，用于[计算每月个人所得税]，数据如下：[1月收入20000，2月收入30000，3月收入30000，4月收入40000，5月收入50000，6月收入60000，7月收入70000，8月收入80000，9月收入90000，10月收入100000，11月收入110000，12月收入120000]',
-      icon: <span style={{ color: '#f93a4a', fontWeight: 700 }}>1</span>,
-    },
-    {
-      key: '1-2',
-      description: '我们公司企业在过去一年中推出了三款产品，并对部分原有产品进行了价格调整。现在他们想通过PVM分析了解今年总收入增长的主要驱动力是什么。 以下是一些关键数据:价格因素:去年A的平均售价为1.5元/瓶，今年调整为1.6元/瓶，去年销量为1200万瓶。B的价格保持不变，仍为2元/瓶。 销量因素:A今年销量减少至1000万瓶。B今年销量稳定在800万瓶。新推出的三款C、D、E，分别售出2000万瓶、1500万瓶和1000万瓶，定价分别为2.5元/瓶、2元瓶和1.8元/瓶。产品组合因素:新品C、D、E带来的收入增量，请帮忙生成PVM模型表格模板，Excel模版需要带公式。',
-      icon: <span style={{ color: '#ff6565', fontWeight: 700 }}>2</span>,
-    },
-    {
-      key: '1-3',
-      description: '随机生成excel',
-      icon: <span style={{ color: '#ff8f1f', fontWeight: 700 }}>3</span>,
-    },
-
-  ],
-};
-
-const DESIGN_GUIDE = {
-  key: '2',
-  label: '提问示例',
-  children: [
-    {
-      key: '2-1',
-      // icon: <HeartOutlined />,
-      // label: 'Intention',
-      description: '我要生成一个[个人所得税的Excel模板]，用于[计算每月个人所得税]，数据如下：[1月收入20000，2月收入30000，3月收入30000，4月收入40000，5月收入50000，6月收入60000，7月收入70000，8月收入80000，9月收入90000，10月收入100000，11月收入110000，12月收入120000]',
-    },
-    {
-      key: '2-2',
-      icon: <SmileOutlined />,
-      label: 'Role',
-      description: "生成excel",
-    },
-    {
-      key: '2-3',
-      icon: <CommentOutlined />,
-      label: 'Chat',
-      description: 'How AI Can Express Itself in a Way Users Understand',
-    },
-    {
-      key: '2-4',
-      icon: <PaperClipOutlined />,
-      label: 'Interface',
-      description: 'AI balances "chat" & "do" behaviors.',
-    },
-  ],
-};
-
-const SENDER_PROMPTS: GetProp<typeof Prompts, 'items'> = [
-  {
-    key: '1',
-    description: 'Upgrades',
-    icon: <ScheduleOutlined />,
-  },
-  {
-    key: '2',
-    description: 'Components',
-    icon: <ProductOutlined />,
-  },
-  {
-    key: '3',
-    description: 'RICH Guide',
-    icon: <FileSearchOutlined />,
-  },
-  {
-    key: '4',
-    description: 'Installation Introduction',
-    icon: <AppstoreAddOutlined />,
-  },
-];
-
+import {requestUrl, HOT_TOPICS,DEFAULT_CONVERSATIONS_ITEMS,DESIGN_GUIDE,SENDER_PROMPTS,downloadExcelByUrl,loadingText, loadingTextFind  } from './contant'
 
 
 const Independent: React.FC = () => {
@@ -159,6 +33,7 @@ const Independent: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const [isPolling, setIsPolling] = useState(false);
+
 const sessionIdRef = useRef<string | null>(null);
 
 const timerRef = useRef<any>(null);
@@ -168,14 +43,13 @@ const curContentRef = useRef<string | null>(null);
 const theme = useTheme();
 const thinkingRef = useRef<any>(null);
 
-  const location = useLocation();
-
 const generateRandom6DigitString = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
     const chat = async (message: string) => {
         abortController.current = new AbortController();
         sessionIdRef.current = generateRandom6DigitString()
+
         try {
 
             await fetchEventSource(`${requestUrl}/api/chat/completeStream`, {
@@ -196,18 +70,25 @@ const generateRandom6DigitString = () => {
                 onmessage(event) {
                   console.log('event:', event);
                   if(!event?.data) return
+
                    setMessages(prev => {
                     const index = prev.findIndex(v => v.sessionId ===sessionIdRef.current && v?.message?.role === 'thinking');
+                    const loadingIndex =  prev[index]?.message?.content.indexOf(loadingTextFind)
                     if(index>= 0) {
                       curContentRef.current += event.data
+
                       return [
                         ...prev.slice(0,index),
                          {
                           key: generateRandom6DigitString(),
                           sessionId: sessionIdRef.current,
                           message: {
+                            percentage: (((prev[index]?.message?.percentage) || 0) + 5) >=100 ? 99 : (((prev[index].message?.percentage) || 0) + 1),
                             role: 'thinking',
                             content: prev[index]?.message?.content + event.data,
+                            status:0
+                            // content: loadingIndex > 0 ? prev[index]?.message?.content.slice(0,loadingIndex) + event.data + loadingText : prev[index]?.message?.content + event.data + loadingText,
+
                           },
                         },
                         prev[prev.length - 1]
@@ -218,7 +99,7 @@ const generateRandom6DigitString = () => {
                       {
                         key: (+ new Date()).toString(),
                         sessionId: sessionIdRef.current,
-                        message: { role: 'thinking', content: event.data.trim(),},
+                        message: {percentage: 0, role: 'thinking', content: event.data.trim(),status: 0},
                       },
                       prev[prev.length - 1]
                     ]
@@ -242,77 +123,54 @@ const generateRandom6DigitString = () => {
         }
     };
 
-         const downloadExcelByUrl = async (url: string, name?: string) => {
-        let fileName = name || '文件下载.xlsx'
-      // window.open(url, '_blank');
-      // return
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('文件下载失败');
 
-        // 从响应头获取文件名（优先于服务器配置）
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition) {
-            const match = contentDisposition.match(/filename="?([^";]+)"?/);
-            if (match && match[1]) {
-                fileName = decodeURIComponent(match[1]); // 解码可能的URL编码文件名
-            }
-        }
-
-        // 将响应转为Blob（二进制对象）
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-
-        // 创建a标签下载
-        const link = document.createElement('a');
-        link.href = objectUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-
-        // 清理资源
-        setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(objectUrl); // 释放内存
-        }, 0);
-    } catch (error) {
-        console.error('下载失败:', error);
-    }
-}
-const pollForUrl = async () => {
-  let maxRetries = 10;
-  let retries = 0;
-  if (isPolling ||timerRef.current) return;
-  console.log('pollForUrl',isPolling);
-
-  setIsPolling(true);
-  timerRef.current = setTimeout(async() => {
-    if(retries > maxRetries) {
-       // 处理失败情况
-            setMessages(prev => [
+      // 文件生成失败
+      const fail = () => {
+            setMessages(prev => {
+              const newMsgs = [
               ...prev.slice(0,prev.length-1),
                {
                 key: generateRandom6DigitString(),
                 message: {
-                  role: 'thinking',
+                  role: 'assistant',
                   content: '文件生成失败，请重试！'
                 },
               },
-              {
-                key: (+new Date()).toString(),
-                message: {
-                  role: 'file',
-                  content: '文件生成失败，请重试'
-                },
-              }
-            ]);
-            clearTimeout(timerRef.current);
+            ]
+            return newMsgs.map(v => {
+                if(v.sessionId === sessionIdRef.current && v?.message?.role === 'thinking') {
+                  return {
+                    ...v,
+                    message: {
+                      ...v.message,
+                      status: 2
+                    },
+                  };
+                }
+                return v
+              })
+            })
+            clearInterval(timerRef.current);
             timerRef.current = null
+          setLoading(false);
+
+        }
+const pollForUrl = async () => {
+  let maxRetries = 10;
+  let retries = 0;
+  // const curThinkIndex = messages.findIndex(v => v.sessionId ===sessionIdRef.current && v?.message?.role === 'thinking');
+  // console.log('curThinkIndex',curThinkIndex, messages,sessionIdRef.current)
+  if (isPolling ||timerRef.current) return;
+  setIsPolling(true);
+  timerRef.current = setInterval(async() => {
+    if(retries > maxRetries) {
+            fail()
             return
     }
     retries += 1;
- try {
+    try {
         const response = await fetch(`${requestUrl}/api/chat/read-file?sessionId=${sessionIdRef.current}`, {
+        // const response = await fetch(`${requestUrl}/api/chat/read-file?sessionId=123`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -321,10 +179,11 @@ const pollForUrl = async () => {
 
         if (response.ok) {
           const data = await response.json();
-          if (data.url) {
-          clearTimeout(timerRef.current);
+          if (data.status === 1) {
+          clearInterval(timerRef.current);
           timerRef.current = null
-            setMessages(prev => [
+            setMessages(prev => {
+              const newMsgs = [
               ...prev.slice(0,prev.length-1),
               {
                 key: generateRandom6DigitString(),
@@ -337,30 +196,26 @@ const pollForUrl = async () => {
                   }
                 },
               }
-            ]);
+            ]
+              return newMsgs.map(v => {
+                if(v.sessionId === sessionIdRef.current && v?.message?.role === 'thinking') {
+                  return {
+                    ...v,
+                    message: {
+                      ...v.message,
+                      percentage: 100,
+                      status: 1
+                    },
+                  };
+                }
+                return v
+              })
+            });
           setLoading(false);
-          } else if (data.status === 'failed') {
+          } else if (data.status === 2) {
             // 处理失败情况
-            setMessages(prev => [
-              ...prev.slice(0,prev.length-1),
-               {
-                key: generateRandom6DigitString(),
-                message: {
-                  role: 'thinking',
-                  content: '文件生成失败，请重试！'
-                },
-              },
-              {
-                key: (+new Date()).toString(),
-                message: {
-                  role: 'file',
-                  content: '文件生成失败，请重试'
-                },
-              }
-            ]);
-          setLoading(false);
+            fail()
           }
-          // 如果还在处理中，继续轮询
         }
       } catch (error) {
         console.error('Polling error:', error);
@@ -401,11 +256,17 @@ const pollForUrl = async () => {
     setLoading(true);
       setMessages(prev => [
       ...prev,
+
+       {
+        key: '2',
+        message: { role: 'thinking', content: '21413' },
+      },
       {
-        key: +new Date(),
-        message: { role: 'thinking', content: '正在生成中，请稍等！' },
+        key: '1',
+        message: { role: 'loading', content: '正在生成中，请稍等！' },
       },
     ])
+    pollForUrl()
   }
   // 滚动到thinkingBox底部的方法
 const scrollToBottomPrecise = () => {
@@ -414,17 +275,6 @@ const scrollToBottomPrecise = () => {
     thinkingRef.current.scrollTop = thinkingRef.current.scrollHeight;
   }
 };
-
-
-//  useEffect(() => {
-//     // 获取从首页传递过来的参数
-//     if (location.state && (location.state as any).prompt) {
-//       const prompt = (location.state as any).prompt;
-//         // console.log('dafaf',prompt)
-//       onSubmit(prompt);
-//       location.state = ''
-//     }
-//   }, [location.state]);
   useEffect(() => {
     const prompt = localStorage.getItem('prompt');
     if(prompt) {
@@ -450,46 +300,44 @@ const scrollToBottomPrecise = () => {
             typing: i.status === 'loading' ? { step: 5, interval: 20, suffix: <>💗</> } : false,
           }))}
           style={{ height: '100%', paddingInline: 'calc(calc(100% - 700px) /2)'}}
-          roles={{
-            assistant: {
-              placement: 'start',
-              // footer: (
-              //   <div style={{ display: 'flex' }}>
-              //     <Button type="text" size="small" icon={<ReloadOutlined />} />
-              //     <Button type="text" size="small" icon={<CopyOutlined />} />
-              //     <Button type="text" size="small" icon={<LikeOutlined />} />
-              //     <Button type="text" size="small" icon={<DislikeOutlined />} />
-              //   </div>
-              // ),
-              loadingRender: () => <Spin size="small" />,
-              // avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
-            },
-            user: { placement: 'end',
-              // avatar: { icon: <UserOutlined />, style: { background: '#87d068' } },
-            },
-            thinking: {
-              placement: 'start',
-              variant:'borderless',
-              className: 'thinkingBox',
-              loadingRender: () => <Spin size="small" />,
-              messageRender: (content) => <div className={styles.thinkWrap}>
+          roles={(bubble: any, index) => {
+            switch (bubble.role) {
+              case 'assistant':
+                return {
+                  placement: 'start',
+                  loadingRender: () => <Spin size="small" />,
+                }
+                case 'user':
+                return {
+                  placement: 'end',
+                };
+                case 'thinking':
+                return {
+                   placement: 'start',
+                    variant:'borderless',
+                    className: 'thinkingBox',
+                    loadingRender: () => <Spin size="small" />,
+                    messageRender: (content) => <div className={styles.thinkWrap}>
 
-                <div className={styles.thinking} ref={thinkingRef} dangerouslySetInnerHTML={{__html: content}}></div>
-                <Excel />
-              </div>
-            },
-            loading: {
-              placement: 'start',
-              variant:'borderless',
-              messageRender: (content) => <div></div>
-            },
-             file: {
-                placement: 'start',
+                      <div className={styles.thinking} >
+                        <div className={'thinkingInner scrollBar'} ref={thinkingRef} dangerouslySetInnerHTML={{__html: content}}></div>
+                         {!bubble.isCancelled && bubble.status === 0 && <div className='thinkingLoading'><LoadingOutlined /></div>}
+                      </div>
+                      <Excel currentPercentage={bubble.percentage} isCancelled={bubble.isCancelled} status={bubble.status}/>
+                    </div>
+                };
+                case 'loading':
+                  return {
+                      placement: 'start',
+                      variant:'borderless',
+                      messageRender: (content) => <div></div>
+                  }
+                case 'file':
+                  return {
+                       placement: 'start',
                 variant: 'borderless',
                 messageRender: (content) => (
-                  // <Flex vertical gap="middle">
-                  //     <Attachments.FileCard key={content.uid} item={content} />
-                  // </Flex>
+
                   <div className={"excelSucess"}>
                       <div className={"left"}>
                           <div className={"iconName"}>
@@ -510,7 +358,13 @@ const scrollToBottomPrecise = () => {
                   // <Complete url={content.url} name={decodeURIComponent(content.name)} />
                   // <Excel />
                 ),
-              },
+                  }
+
+              default:
+                return {
+                  placement: 'start',
+                };
+            }
           }}
         />
       ) : (
@@ -606,6 +460,9 @@ const scrollToBottomPrecise = () => {
         value={inputValue}
         // header={senderHeader}
         // prefix={<div className={'a'}>dada</div>}
+        classNames={{
+          content: 'sender-content'
+        }}
         onSubmit={() => {
           onSubmit(inputValue);
           setInputValue('');
@@ -615,7 +472,10 @@ const scrollToBottomPrecise = () => {
           abortController.current?.abort();
           setLoading(false);
           const loadingIndex = messages.findIndex((item) => item.message.role === 'loading');
-          setMessages(messages.slice(0, loadingIndex))
+          const thinkingIndex = messages.findIndex((item) => item.sessionId === sessionIdRef.current);
+          const newMessages = messages.slice(0, loadingIndex);
+          newMessages[thinkingIndex].message.isCancelled = true;
+          setMessages(newMessages)
         }}
         // prefix={
         //   <Button
@@ -650,7 +510,7 @@ const scrollToBottomPrecise = () => {
     <div className={styles.layout}>
       <Header simple={true}/>
       {/* {chatSider} */}
-      {/* <button onClick={add}>添加</button> */}
+      {/* <button onClick={add} style={{color: 'red'}}>添加</button> */}
 
       <div className={styles.chat}>
         {chatList}

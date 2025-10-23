@@ -40,13 +40,19 @@ const initialTableData = [
   { key: '5', a: '', b: '', c: '', d: '', e: '' }
 ];
 
-const App = () => {
+const statusText = [
+  {text1: '正在生成EXCEL,这个过程大约需要2～5分钟', text2: ''},
+  {text1: '您的EXCEL已经生成成功', text2: ''},
+  {text1: '生成失败', text2: ''},
+]
+
+const App = ({currentPercentage,isCancelled,status}: any) => {
   // 状态管理
   const [currentStateIndex, setCurrentStateIndex] = useState(0);
-  const [currentPercentage, setCurrentPercentage] = useState(0);
+  // const [currentPercentage, setCurrentPercentage] = useState(0);
   const [tableData, setTableData] = useState(initialTableData);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isCancelled, setIsCancelled] = useState(false);
+  // const [isCancelled, setIsCancelled] = useState(false);
   const [activeCells, setActiveCells] = useState(0);
   const [displayedStatus, setDisplayedStatus] = useState('');
   const [displayedSubStatus, setDisplayedSubStatus] = useState('');
@@ -66,7 +72,7 @@ const App = () => {
     mouseFollowContainer.current = container;
 
     // 开始生成过程
-    startGeneration();
+    // startGeneration();
     // 初始化第一个状态的打字效果
     startTyping(generationStates[0].name, setDisplayedStatus, 'main');
     startTyping(generationStates[0].subname, setDisplayedSubStatus, 'sub');
@@ -183,6 +189,10 @@ const App = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    setActiveCells(Math.floor((currentPercentage / 100) * 15));
+  }, [currentPercentage]);
+
   // 更新Excel预览
   const updateExcelPreview = (percentage) => {
     const filledCells = Math.floor((percentage / 100) * 25); // 5行5列共25个单元格
@@ -294,11 +304,11 @@ const App = () => {
               <div className="progress-info">
                 <span className="percentage">{currentPercentage}%</span>
                 <span className="time-estimate">
-                  {currentPercentage < 100 && !isCancelled
-                    ? `预计剩余时间: ${Math.round((100 - currentPercentage) * 0.2)}秒`
-                    : currentPercentage === 100
-                      ? '已完成'
-                      : '已取消'}
+                  {isCancelled && '已取消'}
+                  {!isCancelled && (
+                    status===0 ? `预计剩余时间: ${Math.round((100 - currentPercentage) * 0.2)}秒` : status === 1 ? '已完成' :'生成失败'
+                  )
+                }
                 </span>
               </div>
               <Progress
@@ -325,9 +335,9 @@ const App = () => {
               </div>
             </div>
  {/* 状态信息区域 */}
-            {/* <div className="status-section">
+            <div className="status-section">
               <div className="status-item">
-                <div className="status-icon">
+                {/* <div className="status-icon">
                   {isCancelled ? (
                     <CloseOutlined style={{ color: '#ef4444' }} />
                   ) : currentPercentage === 100 ? (
@@ -335,24 +345,24 @@ const App = () => {
                   ) : (
                     <Spin indicator={<LoadingOutlined style={{ color: '#3b82f6' }} spin />} />
                   )}
-                </div>
+                </div> */}
                 <div className="status-texts">
 
                   <div className="sub-status">
-                    {currentPercentage === 100  ? '您的Excel文件已成功生成，可以点击按钮下载' : '正在生成中，请稍等！'}
+                    {isCancelled ? '已取消' : statusText[status || 0]?.text1}
                   </div>
                 </div>
-                {
+                {/* {
                   currentPercentage === 100 &&  <Button
                 className="cancel-btn"
                 onClick={cancelGeneration}
               >
                 下载
               </Button>
-                }
+                } */}
 
               </div>
-            </div> */}
+            </div>
             {/* Excel表格预览 */}
             {/* <div className="excel-preview">
               <div className="table-header">

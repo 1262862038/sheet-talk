@@ -162,18 +162,28 @@ const useStyle = createStyles(({ token, css }: any) => {
     `,
     thinkWrap: css`
       display: flex;
-      align-items: flex-start;
+      /* align-items: flex-start; */
     `,
     thinking: css`
       color: #9aa7b7;
       font-size: 14px;
       margin-right: 30px;
       width: 320px;
-      height: 380px;
-      overflow-y: auto;
       background: #1e1e1e;
       border-radius: 8px;
-      padding: 1.5rem;
+      padding: 20px 0;
+      position: relative;
+      .thinkingInner {
+        overflow-y: auto;
+        height: 340px;
+        padding: 0 20px;
+
+      }
+      .thinkingLoading {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
     `,
     sendButton: css`
       display: flex;

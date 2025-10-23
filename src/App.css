@@ -23,3 +23,19 @@ body {
   font-weight: 400;
   opacity: 0.5;
 }
+
+
+ .scrollBar::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+        .scrollBar::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .scrollBar::-webkit-scrollbar-button {
+            height: 0;
+        }
+        .scrollBar::-webkit-scrollbar {
+            width: 4px;
+        }
