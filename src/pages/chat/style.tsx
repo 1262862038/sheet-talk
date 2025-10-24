@@ -50,7 +50,7 @@ const useStyle = createStyles(({ token, css }: any) => {
     `,
     layout: css`
       width: 100%;
-      min-width: 420px;
+      min-width: 360px;
       height: 100vh;
       display: flex;
       flex-direction: column;

@@ -18,8 +18,13 @@ const Header = ({simple}: any) => {
                 ></video>
                 <span className="text-xl font-bold text-primary">SheetTalk</span>
 
+
+               {!simple &&
+               <>
                 <span style={{fontWeight: 600}}>X</span>
-                <img style={{left: simple ? '186px' : '160px'}} className='gd-logo' src={logo} alt="" />
+               <img style={{left: simple ? '186px' : '160px'}} className='gd-logo' src={logo} alt="" />
+
+               </>}
             </div>
            {!simple ? <>
 
