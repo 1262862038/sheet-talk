@@ -165,7 +165,7 @@ const handlePromptChange = (e) => {
             <section id="generator" className="py-16 bg-gray-900">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold mb-12 text-center">开始生成您的Excel</h2>
-                <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-gray-700 overflow-hidden">
+                <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-gray-700 overflow-hidden" style={{maxWidth: '1000px'}}>
                     <div className="p-8">
                         <div className="mb-6">
                             <label for="excel-prompt" className="block text-gray-200 font-medium mb-2">描述您需要的Excel文件</label>

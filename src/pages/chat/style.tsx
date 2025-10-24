@@ -177,6 +177,7 @@ const useStyle = createStyles(({ token, css }: any) => {
         overflow-y: auto;
         height: 340px;
         padding: 0 20px;
+        color: #ffffffcc;
 
       }
       .thinkingLoading {
