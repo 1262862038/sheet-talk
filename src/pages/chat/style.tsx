@@ -122,6 +122,13 @@ const useStyle = createStyles(({ token, css }: any) => {
       .ant-prompts-desc {
         /* color: #000000a6 !important; */
         width: 100%;
+          width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
       }
       .ant-prompts-icon {
         /* color: #000000a6 !important; */
