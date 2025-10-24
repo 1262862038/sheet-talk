@@ -97,7 +97,7 @@ const generateRandom6DigitString = () => {
                           sessionId: sessionIdRef.current,
                           message: {
                             // percentage: (((prev[index]?.message?.percentage) || 0) + 5) >=100 ? 99 : (((prev[index].message?.percentage) || 0) + 1),
-                            percentage: conuterRef.current >=100 ? 90 : conuterRef.current,
+                            percentage: conuterRef.current >=90 ? 90 : conuterRef.current,
                             role: 'thinking',
                             content: prev[index]?.message?.content + event.data.trim(),
                             status:0
