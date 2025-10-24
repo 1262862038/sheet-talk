@@ -391,7 +391,7 @@ const scrollToBottomPrecise = () => {
         >
           <div className={styles.introWrap}>
             <div className={'tag'}>SheetTalk超级智能体</div>
-            <div className={'desc'}>调用海量工具完成各种任务</div>
+            <div className={'desc'}>告别手动制表，步入自动Excel生成时代</div>
           </div>
           <Flex gap={16}>
             <Prompts
