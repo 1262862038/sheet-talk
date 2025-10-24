@@ -10,7 +10,11 @@ const Header = ({simple}: any) => {
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
             <div onClick={() => navigate('/')} className="cursor-pointer flex items-center space-x-2">
               {simple && <img src="https://simg01.gaodunwangxiao.com/uploadfiles/tmp/upload/202510/22/eb10b_20251022190440.png" alt="" style={{width: '18px', height: '18px'}}/>}
-                <video src={videoStatic} autoPlay loop muted style={{width: '40px', height: '40px'}}></video>
+                <video src={videoStatic} autoPlay loop muted style={{width: '40px', height: '40px'}}  playsInline
+                  webkit-playsinline
+                  x5-video-player-type="h5"
+                  x5-video-orientation="portrait"
+                ></video>
                 <span className="text-xl font-bold text-primary text-white">SheetTalk</span>
             </div>
            {!simple ? <>
