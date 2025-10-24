@@ -7,7 +7,7 @@ const Header = ({simple}: any) => {
  const navigate = useNavigate();
 
   return (
-    <nav className={`bg-gray-800 shadow-gray-700 ${simple ? '' : 'fixed'} w-full z-50`}>
+    <nav className={`shadow-gray-700 ${simple ? 'bg-gray-800' : 'fixed'} w-full z-50`} style={{backgroundColor: simple ? '#1e2939' : '#00000080'}}>
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
             <div onClick={() => navigate('/')} className="logoWrap cursor-pointer flex items-center space-x-2">
               {simple && <img src="https://simg01.gaodunwangxiao.com/uploadfiles/tmp/upload/202510/22/eb10b_20251022190440.png" alt="" style={{width: '18px', height: '18px'}}/>}
@@ -16,7 +16,7 @@ const Header = ({simple}: any) => {
                   x5-video-player-type="h5"
                   x5-video-orientation="portrait"
                 ></video>
-                <span className="text-xl font-bold text-primary">SheetTalk</span>
+                <span className="text-xl font-bold text-primary text-white">SheetTalk</span>
 
 
                {!simple &&
@@ -29,9 +29,8 @@ const Header = ({simple}: any) => {
            {!simple ? <>
 
             <div className="hidden md:flex items-center space-x-6">
-                <a href="#features" className="text-gray-300 hover:text-primary transition-colors">功能特点</a>
-                <a href="#how-it-works" className="text-gray-300 hover:text-primary transition-colors">使用方法</a>
-                <a href="#examples" className="text-gray-300 hover:text-primary transition-colors">示例展示</a>
+                <a href="#how-it-works" className="text-white hover:text-primary transition-colors font-bold">使用方法</a>
+                <a href="#features" className="text-white hover:text-primary transition-colors font-bold">功能特点</a>
             </div>
             <div className="md:hidden">
                 <button id="mobile-menu-button" className="text-gray-300 hover:text-primary">
