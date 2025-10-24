@@ -127,11 +127,19 @@ export const SENDER_PROMPTS: GetProp<typeof Prompts, 'items'> = [
   },
 ];
 
+const isAndroidWechat = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    return /android/.test(userAgent) && /micromessenger/.test(userAgent);
+  };
 
   export const downloadExcelByUrl = async (url: string, name?: string) => {
+
         let fileName = name || '文件下载.xlsx'
-      // window.open(url, '_blank');
-      // return
+    // 如果是安卓微信环境，则使用window.open
+  if (isAndroidWechat()) {
+    window.open(url, '_blank');
+    return;
+  }
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('文件下载失败');

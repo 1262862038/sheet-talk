@@ -82,7 +82,10 @@ const generateRandom6DigitString = () => {
                 onmessage(event) {
                   console.log('event:', event);
                   // if(!event?.data) return
-
+                  if(event?.data === '访问受限') {
+                    accessLimit()
+                    return
+                  }
 
                    setMessages(prev => {
                     const index = prev.findIndex(v => v.sessionId ===sessionIdRef.current && v?.message?.role === 'thinking');
@@ -139,6 +142,26 @@ const generateRandom6DigitString = () => {
     };
 
 
+    // 访问次数用完
+    const accessLimit = () => {
+
+            setMessages(prev => {
+              const newMsgs = [
+              ...prev.slice(0,prev.length-1),
+               {
+                key: generateRandom6DigitString(),
+                message: {
+                  role: 'assistant',
+                  content: '访问次数用完！'
+                },
+              },
+            ]
+            return newMsgs
+            })
+
+            setLoading(false);
+
+    }
       // 文件生成失败
       const fail = () => {
             setMessages(prev => {
@@ -332,7 +355,7 @@ const scrollToBottomPrecise = () => {
                     variant:'borderless',
                     className: 'thinkingBox',
                     loadingRender: () => <Spin size="small" />,
-                    messageRender: (content) => <div className={styles.thinkWrap}>
+                    messageRender: (content) => <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8'>
 
                       <div className={styles.thinking} >
                         <div className={'thinkingInner scrollBar'} ref={thinkingRef} dangerouslySetInnerHTML={{__html: content}}></div>
@@ -502,6 +525,7 @@ const scrollToBottomPrecise = () => {
         // }
         loading={loading}
         className={styles.sender}
+        // disabled={loading}
         // allowSpeech
         actions={(_, info) => {
           const { SendButton, LoadingButton, SpeechButton } = info.components;

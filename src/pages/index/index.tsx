@@ -42,9 +42,9 @@ const handlePromptChange = (e) => {
                     <a href="#generator" className="bg-secondary hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors shadow-gray-700 hover:shadow-gray-700 transform hover:-translate-y-1 duration-300">
                         立即生成Excel
                     </a>
-                    <a href="#features" className="bg-gray-800 hover:bg-gray-800 text-primary font-bold py-3 px-8 rounded-lg transition-colors shadow-gray-700 hover:shadow-gray-700 transform hover:-translate-y-1 duration-300">
+                    {/* <a href="#features" className="bg-gray-800 hover:bg-gray-800 text-primary font-bold py-3 px-8 rounded-lg transition-colors shadow-gray-700 hover:shadow-gray-700 transform hover:-translate-y-1 duration-300">
                         了解更多
-                    </a>
+                    </a> */}
                 </div>
             </div>
         </div>

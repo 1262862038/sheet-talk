@@ -42,7 +42,7 @@ const useStyle = createStyles(({ token, css }: any) => {
       }
       .desc {
         margin-top: 12px;
-        height: 45px;
+        line-height: 45px;
         font-size: 32px;
         font-style: normal;
         font-weight: 400;
@@ -50,7 +50,7 @@ const useStyle = createStyles(({ token, css }: any) => {
     `,
     layout: css`
       width: 100%;
-      min-width: 1000px;
+      min-width: 420px;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -108,6 +108,7 @@ const useStyle = createStyles(({ token, css }: any) => {
     chat: css`
       height: calc(100% - 64px);
       width: 100%;
+      padding: 0 20px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -159,16 +160,21 @@ const useStyle = createStyles(({ token, css }: any) => {
     `,
     thinkingBox: css`
       padding: 10px 0;
+      width: 100%;
+      .ant-bubble-content {
+        width: 100%;
+      }
     `,
-    thinkWrap: css`
-      display: flex;
-      /* align-items: flex-start; */
-    `,
+    // thinkWrap: css`
+    //   display: flex;
+    //   /* align-items: flex-start; */
+    // `,
     thinking: css`
       color: #9aa7b7;
       font-size: 14px;
-      margin-right: 30px;
-      width: 320px;
+      width: 100%;
+      /* margin-right: 30px; */
+      /* width: 320px; */
       background: #1e1e1e;
       border-radius: 8px;
       padding: 20px 0;
